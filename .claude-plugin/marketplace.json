@@ -1,0 +1,11 @@
+{
+  "name": "jobs-build",
+  "owner": {"name": "jobs-build"},
+  "plugins": [
+    {
+      "name": "jobs-build-skills",
+      "source": "./",
+      "description": "Skills for authoring JOBS BUILD.jobs recipes (Go, Rust, Python, Elixir, Ruby/Rails) and JOBS plugins/fetchers"
+    }
+  ]
+}
