@@ -1,6 +1,6 @@
 {
   "name": "jobs-build-skills",
-  "description": "Skills for authoring JOBS BUILD.jobs recipes (Go, Rust, Python, Elixir, Ruby/Rails) and JOBS plugins/fetchers",
-  "version": "0.1.0",
+  "description": "Skills for authoring JOBS BUILD.jobs recipes (Go, Rust, Python, Elixir, Ruby/Rails), TESTS.jobs test recipes, and JOBS plugins/fetchers",
+  "version": "0.2.0",
   "author": {"name": "jobs-build"}
 }

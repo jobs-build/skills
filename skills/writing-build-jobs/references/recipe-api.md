@@ -6,7 +6,10 @@ contract; this file condenses it for recipe authors.
 ## Evaluation model
 
 - `BUILD.jobs` at the build dir (override: `--build-file`, or per-input
-  `build_file=` / inline `buildJobs=`).
+  `build_file=` / inline `buildJobs=`). A `TESTS.jobs` in the same dir
+  defines `test()` — everything below applies to it too; the differences
+  (no `runtime_deps`, the predeclared `build` input, `timeout`) are in
+  [tests.md](tests.md).
 - The file is evaluated **twice**: the `pluginresolve` stage calls
   `plugins()` (no plugins callable), the `pin` stage calls `build()` (live
   `plugins` mapping; the `def plugins():` is stripped from the AST first).
@@ -69,6 +72,9 @@ be Inputs. Dep names: ≤128 bytes, no slashes.
 | `sources_allow_escaping` | no | `[str]` | symlinks allowed to point outside the context |
 | `caches` | no | `{path: id}` | persistent build caches, see below |
 | `resources` | no | `struct(cpu="2", memory="4Gi")` | scheduling requirement; default cgroup is 1 CPU / **1 GiB memory.max** — big compiles get OOM-killed without this |
+
+`test()` takes the same fields minus `runtime_deps`, plus `timeout`
+(Go duration, default `"5m"`) — see [tests.md](tests.md).
 
 Cover paths: `"//lib/x"` = context-root-relative, `"proto"` = build-dir
 relative. The context root widens automatically to the git repo root when you
@@ -133,11 +139,13 @@ jobs-client develop                 # interactive bash INSIDE the build sandbox;
                                     # script saved at /build/build.sh, not run
 jobs-client image -o app.tar        # OCI tarball from artifact + runtime closure
 jobs-client remote-build --server <endpoint-id>
+jobs-client test    [--source d] [--dir d] [--test-file f]   # run TESTS.jobs; `test:`/`passed:` keys
+jobs-client remote-test --server <endpoint-id>              # same, on the fleet; pulls the pass home
 jobs-client diagnose --server <id> --request <id> [--json]
 ```
 
-A rerun of an unchanged build must print `(cached)`. `develop` is the
-debugging tool for a failing script.
+A rerun of an unchanged build or test must print `(cached)`. `develop` is
+the debugging tool for a failing script.
 
 ## Identity intuitions (why recipes look the way they do)
 

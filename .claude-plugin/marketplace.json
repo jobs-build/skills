@@ -5,7 +5,7 @@
     {
       "name": "jobs-build-skills",
       "source": "./",
-      "description": "Skills for authoring JOBS BUILD.jobs recipes (Go, Rust, Python, Elixir, Ruby/Rails) and JOBS plugins/fetchers"
+      "description": "Skills for authoring JOBS BUILD.jobs recipes (Go, Rust, Python, Elixir, Ruby/Rails), TESTS.jobs test recipes, and JOBS plugins/fetchers"
     }
   ]
 }

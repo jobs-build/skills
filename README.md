@@ -8,7 +8,7 @@ production recipes in `validator-watch`.
 
 | Skill | Use it to |
 |---|---|
-| [`writing-build-jobs`](skills/writing-build-jobs/SKILL.md) | Author `BUILD.jobs` recipes — Go, Rust, Python, Elixir/Phoenix, Ruby/Rails, and multi-component/upstream-source builds |
+| [`writing-build-jobs`](skills/writing-build-jobs/SKILL.md) | Author `BUILD.jobs` recipes — Go, Rust, Python, Elixir/Phoenix, Ruby/Rails, and multi-component/upstream-source builds — and `TESTS.jobs` test recipes (hermetic, memoized by content, 5-minute default timeout) |
 | [`writing-jobs-plugins`](skills/writing-jobs-plugins/SKILL.md) | Create new JOBS plugins (lockfile → imports) and fetchers (params → fetched tree) for additional ecosystems |
 
 ## Install
