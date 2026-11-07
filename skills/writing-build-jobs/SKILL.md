@@ -1,6 +1,6 @@
 ---
 name: writing-build-jobs
-description: Use when creating or editing a BUILD.jobs file — hermetic JOBS build recipes (Starlark) for Go, Rust, Python, Elixir/Phoenix, Ruby/Rails, or multi-language projects; also when a JOBS build fails offline, a plugin call errors, caches don't warm, or you need pins for toolchains/plugins/fetchers.
+description: Use when creating or editing a BUILD.jobs file — hermetic JOBS build recipes (Starlark) for Go, Rust, Python, Elixir/Phoenix, Ruby/Rails, or multi-language projects — or a TESTS.jobs file (hermetic test runs against the built artifact, memoized by content, 5-minute default timeout); also when a JOBS build or test fails offline, a plugin call errors, caches don't warm, or you need pins for toolchains/plugins/fetchers.
 ---
 
 # Writing BUILD.jobs recipes
@@ -17,6 +17,12 @@ and `build()` (inputs, a bash script, runtime deps, caches).
 touch the network, the recipe is wrong — turn the fetch into an `imp()` with
 a sha256, a plugin call over the lockfile, or a pinned apk.
 
+A `TESTS.jobs` next to it defines `test()`: the same struct minus
+`runtime_deps`, with the directory's own build available as the predeclared
+`build` input, no output, a `timeout` (default 5m), and a pass recorded by
+*content* so unchanged code never re-tests. See
+[references/tests.md](references/tests.md).
+
 ## Workflow
 
 1. Read [references/recipe-api.md](references/recipe-api.md) — the evaluation
@@ -25,13 +31,14 @@ a sha256, a plugin call over the lockfile, or a pinned apk.
    [go.md](references/go.md) · [rust.md](references/rust.md) ·
    [python.md](references/python.md) · [elixir.md](references/elixir.md) ·
    [ruby-rails.md](references/ruby-rails.md). Multi-component, upstream-source,
-   or monorepo builds: also [advanced.md](references/advanced.md).
+   or monorepo builds: also [advanced.md](references/advanced.md). Tests
+   (`TESTS.jobs`): [tests.md](references/tests.md).
 3. Reuse the reference pins verbatim (verified against the org repos as of
    2026-08-31); for anything newer, download the artifact and `sha256sum`
    it — **never invent a hash**.
 4. Verify: `jobs-client build --source .` (or `jb run`), then rerun — the
    rerun must print `(cached)`. Debug failing scripts inside the sandbox
-   with `jobs-client develop`.
+   with `jobs-client develop`. Tests: `jobs-client test`, rerun → `(cached)`.
 
 ## Quick reference
 
@@ -74,6 +81,9 @@ the toolchain version — `<project>-<component>-go1.26.4`, or
 | Script uses a tool not in the seed shell | Only 22 binaries on PATH — use `busybox <applet>` or stage apks |
 | `plugins["x"](…)` outside `build()` / positional args | Plugins are callable only in `build()`, kwargs only |
 | Assuming CWD | Repo-root builds start at `/` — always `cd "$SRC"` |
+| `runtime_deps` in `test()` / `timeout` on `build()` | Both hard-error: tests ship nothing, builds are unbounded |
+| Test suite killed after 5 minutes | Add `timeout = "20m"` to the `test()` struct |
+| Tests re-run on every commit | `closure=` the test files; the `build` input is keyed by the artifact's content, not the commit |
 
 ## Creating a new plugin or fetcher instead
 
